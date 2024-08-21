@@ -55,4 +55,34 @@ const byParagraph = function (paragraph) {
   paragraph.sentences = sentences
 }
 
+const list_reg = /^[#*:;|]+/
+const bullet_reg = /^\*+[^:,|]{4}/
+const number_reg = /^ ?#[^:,|]{4}/
+const has_word = /[\p{Letter}_0-9\]}]/iu
+
+// does it start with a bullet point or something?
+const isList = function (line) {
+  return list_reg.test(line) || bullet_reg.test(line) || number_reg.test(line)
+}
+
+//make bullets/numbers into human-readable *'s
+const cleanList = function (list) {
+  let number = 1
+  list = list.filter((l) => l)
+  for (let i = 0; i < list.length; i++) {
+    let line = list[i]
+    //add # numberings formatting
+    if (line.match(number_reg)) {
+      line = line.replace(/^ ?#*/, number + '. ')
+      line = line + '\n'
+      number += 1
+    } else if (line.match(list_reg)) {
+      number = 1
+      line = line.replace(list_reg, '- ')
+    }
+    list[i] = parseSentence(line)
+  }
+  return list
+}
+
 export { fromText, byParagraph }

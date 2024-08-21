@@ -18,12 +18,12 @@ const cleanList = function (list) {
     let line = list[i]
     //add # numberings formatting
     if (line.match(number_reg)) {
-      line = line.replace(/^ ?#*/, number + ') ')
+      line = line.replace(/^ ?#*/, number + '. ')
       line = line + '\n'
       number += 1
     } else if (line.match(list_reg)) {
       number = 1
-      line = line.replace(list_reg, '')
+      line = line.replace(list_reg, '- ')
     }
     list[i] = parseSentence(line)
   }
