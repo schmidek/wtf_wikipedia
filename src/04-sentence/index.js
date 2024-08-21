@@ -42,6 +42,20 @@ function fromText(str) {
   return new Sentence(obj)
 }
 
+/**
+ * returns one sentence object
+ *
+ * @param {string} str create a object from a sentence
+ * @returns {Sentence} the Sentence created from the text
+ */
+function fromRaw(str) {
+  let obj = {
+    wiki: str,
+    text: str,
+  }
+  return new Sentence(obj)
+}
+
 //used for consistency with other class-definitions
 const byParagraph = function (paragraph) {
   //array of texts
@@ -85,4 +99,4 @@ const cleanList = function (list) {
   return list
 }
 
-export { fromText, byParagraph }
+export { fromText, byParagraph, fromRaw }

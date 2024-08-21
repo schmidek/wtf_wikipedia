@@ -1,10 +1,15 @@
 import Paragraph from './Paragraph.js'
-import { fromText as parseSentence } from '../04-sentence/index.js'
+import { fromText as parseSentence, fromRaw as sentenceFromRaw } from '../04-sentence/index.js'
+import parseTable from '../table/parse/index.js'
 
 const twoNewLines = /\r?\n\r?\n/
 import parseImage from '../image/index.js'
 import parseList from '../list/index.js'
+import Sentence from '../04-sentence/Sentence.js'
 
+/*
+ * Lists
+ */
 const list_reg = /^[#*:;|]+/
 const bullet_reg = /^\*+[^:,|]{4}/
 const number_reg = /^ ?#[^:,|]{4}/
@@ -35,6 +40,13 @@ const cleanList = function (list) {
   return list
 }
 
+/*
+ * Tables
+ */
+const openReg = /^\s*\{\|/
+const closeReg = /^\s*\|\}/
+
+
 
 const parseParagraphs = function (section, doc) {
   let wiki = section._wiki
@@ -58,7 +70,50 @@ const parseParagraphs = function (section, doc) {
     let lines = str.split(/\n/g)
     let theRest = []
     let list = []
+    let table_stack = []
     for (let i = 0; i < lines.length; i++) {
+      //start a table
+      if (openReg.test(lines[i]) === true) {
+        table_stack.push(lines[i])
+        continue
+      }
+      //close a table
+      if (closeReg.test(lines[i]) === true) {
+        table_stack[table_stack.length - 1] += '\n' + lines[i]
+        let table = table_stack.pop()
+        let parsed = parseTable(table)
+        if (parsed.length > 0) {
+          let header = Object.keys(parsed[0])
+          if (header.length > 0) {
+            let table_text = "";
+            let hasHeader = header[0] != "col1"
+            if (hasHeader) {
+              table_text += "| "
+              table_text += header.join(" | ")
+              table_text += " |"
+              table_text += "\n"
+              table_text += "| "
+              table_text += header.map((x) => "----").join(" | ")
+              table_text += " |"
+              table_text += "\n"
+            }
+            for (let row of parsed) {
+              table_text += "| "
+              table_text += header.map((col) => row[col]?.text() || "").join(" | ")
+              table_text += " |"
+              table_text += "\n"
+            }
+            paragraph.sentences.push(sentenceFromRaw(table_text))
+          }
+        }
+        //list.push(table)
+        continue
+      }
+      // add to table
+      if (table_stack.length > 0) {
+        table_stack[table_stack.length - 1] += '\n' + lines[i]
+        continue
+      }
       if (isList(lines[i])) {
         if (theRest.length > 0) {
           paragraph.sentences.push(parseSentence(theRest.join('\n')))

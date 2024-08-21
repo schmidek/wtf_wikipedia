@@ -59,7 +59,7 @@ class Section {
     parseTemplates(this, doc)
 
     //parse the tables
-    parseTable(this)
+    //parseTable(this)
 
     //now parse all double-newlines
     parseParagraphs(this, doc)
