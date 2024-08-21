@@ -78,7 +78,7 @@ const parseParagraphs = function (section, doc) {
         continue
       }
       //close a table
-      if (closeReg.test(lines[i]) === true) {
+      if (closeReg.test(lines[i]) === true && table_stack.length > 0) {
         table_stack[table_stack.length - 1] += '\n' + lines[i]
         let table = table_stack.pop()
         let parsed = parseTable(table)
@@ -124,8 +124,9 @@ const parseParagraphs = function (section, doc) {
         if (list.length > 0) {
           paragraph.sentences.push(...cleanList(list))
           list = []
-        }
+        } else if (!lines[i].startsWith("[[File")) {
         theRest.push(lines[i])
+        }
       }
     }
     if (list.length > 0) {
