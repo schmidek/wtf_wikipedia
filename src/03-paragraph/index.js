@@ -1,6 +1,7 @@
 import Paragraph from './Paragraph.js'
 import { fromText as parseSentence, fromRaw as sentenceFromRaw } from '../04-sentence/index.js'
 import parseTable from '../table/parse/index.js'
+import Table from '../table/Table.js'
 
 const twoNewLines = /\r?\n\r?\n/
 import parseImage from '../image/index.js'
@@ -82,14 +83,15 @@ const parseParagraphs = function (section, doc) {
         table_stack[table_stack.length - 1] += '\n' + lines[i]
         let table = table_stack.pop()
         let parsed = parseTable(table)
-        if (parsed.length > 0) {
+        if (parsed && parsed.length > 0) {
+          let links = new Table(parsed, table).links()
           let header = Object.keys(parsed[0])
           if (header.length > 0) {
             let table_text = "";
             let hasHeader = header[0] != "col1"
             if (hasHeader) {
               table_text += "| "
-              table_text += header.join(" | ")
+              table_text += header.map((x) => x.startsWith("col") ? "" : x).join(" | ")
               table_text += " |"
               table_text += "\n"
               table_text += "| "
@@ -103,7 +105,7 @@ const parseParagraphs = function (section, doc) {
               table_text += " |"
               table_text += "\n"
             }
-            paragraph.sentences.push(sentenceFromRaw(table_text))
+            paragraph.sentences.push(sentenceFromRaw(table_text, links))
           }
         }
         //list.push(table)

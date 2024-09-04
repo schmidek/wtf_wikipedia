@@ -42,16 +42,11 @@ function fromText(str) {
   return new Sentence(obj)
 }
 
-/**
- * returns one sentence object
- *
- * @param {string} str create a object from a sentence
- * @returns {Sentence} the Sentence created from the text
- */
-function fromRaw(str) {
+function fromRaw(str, links) {
   let obj = {
     wiki: str,
     text: str,
+    links: links,
   }
   return new Sentence(obj)
 }

@@ -40,6 +40,30 @@ const methods = {
     }
     return obj
   },
+  link: function () {
+    let type = this.type()
+    let url = ''
+    if (type === 'external') {
+      url = this.site()
+    } else {
+      let page = this.page()
+      page = page.replace(/ /g, '_')
+      page = encodeURIComponent(page)
+
+      let wiki = this.wiki()
+      url = 'https://en.wikipedia.org/wiki/$1'
+      if (wikis.hasOwnProperty(wiki)) {
+        url = 'http://' + wikis[this.wiki()]
+      }
+      url = url.replace(/\$1/g, page)
+    }
+    let json = { "url": url }
+    let text = this.text()
+    if (text) {
+      json["text"] = text
+    }
+    return json
+  },
   wikitext: function () {
     let txt = this.data.raw || ''
     return txt
