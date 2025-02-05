@@ -77,9 +77,10 @@ const parseRefs = function (section) {
     return ' '
   })
 
-  //now that we're done with xml, do a generic + dangerous xml-tag removal
-  wiki = wiki.replace(/ ?<[ /]?[a-z0-9]{1,8}[a-z0-9=" ]{2,20}[ /]?> ?/g, ' ') //<samp name="asd">
-  section._references = references.map((obj) => new Reference(obj.json, obj.wiki))
+  if (!section._references) {
+    section._references = []
+  }
+  references.forEach((obj) => section._references.push(new Reference(obj.json, obj.wiki)))
   section._wiki = wiki
 }
 

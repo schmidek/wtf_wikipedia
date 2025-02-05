@@ -124,7 +124,16 @@ const firstRowHeader = function (rows) {
 
 //turn a {|...table string into an array of arrays
 const parseTable = function (wiki) {
-  let lines = wiki
+  // convert table html into wikitext equivalent
+  let converted = wiki
+    .replace(/<table[^>]*>/g, '{|\n')
+    .replace(/\s*<\/?tr>/g, '\n|-')
+    .replace(/\s*<th>\s*/g, '\n! ')
+    .replace(/\s*<td>\s*/g, '\n| ')
+    .replace(/<\/table>/g, '\n|}')
+    .replace(/(<\/?th>|<\/?td>|<\/?tr>)/g, ' ')
+
+  let lines = converted
     .replace(/\r/g, '')
     .replace(/\n(\s*[^|!{\s])/g, ' $1') //remove unecessary newlines
     .split(/\n/)

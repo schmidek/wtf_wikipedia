@@ -4,7 +4,6 @@
 //these are things we throw-away
 //these will mess-up if they're nested, but they're not usually.
 const ignore = [
-  'table',
   'code',
   'score',
   'data',
@@ -29,7 +28,7 @@ const kill_xml = function (wiki) {
   //types of html/xml that we want to trash completely.
   wiki = wiki.replace(noThanks, ' ')
   //some xml-like fragments we can also kill
-  wiki = wiki.replace(/ ?< ?(span|div|table|data) [a-zA-Z0-9=%.\-#:;'" ]{2,100}\/? ?> ?/g, ' ') //<ref name="asd">
+  wiki = wiki.replace(/ ?< ?(span|div|data) [a-zA-Z0-9=%.\-#:;'" ]{2,100}\/? ?> ?/g, ' ') //<ref name="asd">
   //only kill ref tags if they are selfclosing
   wiki = wiki.replace(/ ?< ?(ref) [a-zA-Z0-9=" ]{2,100}\/ ?> ?/g, ' ') //<ref name="asd"/>
 
@@ -43,7 +42,7 @@ const kill_xml = function (wiki) {
   wiki = wiki.replace(/<blockquote>(.*?)<\/blockquote>/g, `{{blockquote|text=$1}}`)
 
   //some formatting xml, we'll keep their insides though
-  wiki = wiki.replace(/ ?<[ /]?(p|sub|sup|span|nowiki|div|table|br|tr|td|th|pre|pre2|hr|u)[ /]?> ?/g, ' ') //<sub>, </sub>
+  wiki = wiki.replace(/ ?<[ /]?(p|sub|sup|span|nowiki|div|br|pre|pre2|hr|u)[ /]?> ?/g, ' ') //<sub>, </sub>
   wiki = wiki.replace(/ ?<[ /]?(abbr|bdi|bdo|cite|del|dfn|em|ins|kbd|mark|q|s|small)[ /]?> ?/g, ' ') //<abbr>, </abbr>
   wiki = wiki.replace(/ ?<[ /]?h[0-9][ /]?> ?/g, ' ') //<h2>, </h2>
   wiki = wiki.replace(/ ?< ?br ?\/> ?/g, '\n') //<br />
