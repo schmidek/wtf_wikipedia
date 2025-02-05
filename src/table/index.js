@@ -1,8 +1,8 @@
 import parseTable from './parse/index.js'
 import Table from './Table.js'
 //const table_reg = /\{\|[\s\S]+?\|\}/g; //the largest-cities table is ~70k chars.
-const openReg = /^\s*\{\|/
-const closeReg = /^\s*\|\}/
+const openReg = /^\s*\{\||<table[ >]/
+const closeReg = /^\s*\|\}|<\/table>/
 
 //tables can be recursive, so looky-here.
 const findTables = function (section) {

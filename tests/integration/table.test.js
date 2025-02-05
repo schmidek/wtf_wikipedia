@@ -594,3 +594,48 @@ test('generated table', (t) => {
   t.equal(doc.tables().length, 1, 'cbb roster')
   t.end()
 })
+
+test('html table', (t) => {
+  const str = `<table border="1">
+<tr>
+<th>h1</th>
+<th>h2</th>
+</tr>
+<tr>
+<td>a</td>
+<td>b</td>
+</tr>
+</table>`
+  const doc = wtf(str)
+  const table = doc.table(0).keyValue()
+  t.equal(table.length, 1, '1 rows')
+  t.equal(table[0].h1, 'a')
+  t.equal(table[0].h2, 'b')
+  t.end()
+})
+
+
+// BBC's_100_Greatest_Films_of_the_21st_Century
+test('mixed html table', (t) => {
+  const str = `{| class="wikitable sortable"
+! No. !! Title !! Director !! Country !! Year </tr>
+| 1 ||''[[Mulholland Drive (film)|Mulholland Drive]]''<td>[[David Lynch]]</td><td>United States, France</td><td> 2001 </tr>
+| 2 || ''[[In the Mood for Love]]'' || [[Wong Kar-wai]] ||Hong Kong, France <td> 2000 </td></tr>
+| 3 || ''[[There Will Be Blood]]'' || [[Paul Thomas Anderson]] ||United States || 2007 </tr>
+| 4 || ''[[Spirited Away]]'' || [[Hayao Miyazaki]] || Japan ||2001 </tr>
+| 5 || ''[[Boyhood (2014 film)|Boyhood]]'' || [[Richard Linklater]] || rowspan="3"|United States || 2014 </tr>
+| 6 || ''[[Eternal Sunshine of the Spotless Mind]]'' || [[Michel Gondry]] ||2004 </tr>
+| 7 || ''[[The Tree of Life (film)|The Tree of Life]]'' || [[Terrence Malick]] || 2011 </tr>
+| 8 || ''[[Yi Yi]]'' || [[Edward Yang]] || Taiwan, Japan || 2000 </tr>
+| 9 || ''[[A Separation]]'' || [[Asghar Farhadi]] || Iran || 2011 </tr>
+| 10 || ''[[No Country for Old Men (film)|No Country for Old Men]]'' <td> [[Joel Coen]] and [[Ethan Coen]] </td>|| United States || 2007 </tr>
+|}`
+  const doc = wtf(str)
+  const table = doc.table(0).keyValue()
+  t.equal(table.length, 10, '10 rows')
+  t.equal(table[0]["No."], '1')
+  t.equal(table[0]["Year"], '2001')
+  t.equal(table[9]["No."], '10')
+  t.equal(table[9]["Year"], '2007')
+  t.end()
+})

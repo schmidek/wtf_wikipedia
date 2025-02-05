@@ -22,7 +22,7 @@ const findRows = function (lines) {
   let row = []
   lines = cleanup(lines)
   for (let i = 0; i < lines.length; i += 1) {
-    let line = lines[i]
+    let line = lines[i].trimStart() // Blank spaces at the beginning of a line are ignored
     //'|-' is a row-seperator
     if (/^\|-/.test(line) === true) {
       //okay, we're done the row
