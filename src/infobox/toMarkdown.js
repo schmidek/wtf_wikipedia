@@ -29,7 +29,8 @@ const expandVariables = function (s, data) {
           const endIndex = i - 2
           const stringToExpand = s.substring(startIndex, endIndex)
           const separatorIndex = stringToExpand.indexOf("|")
-          const variable = separatorIndex == -1 ? stringToExpand : stringToExpand.substring(0, separatorIndex)
+          let variable = separatorIndex == -1 ? stringToExpand : stringToExpand.substring(0, separatorIndex)
+          variable = variable.toLowerCase()
           let expanded = ""
           if (variable in data) {
             expanded = data[variable].text()
