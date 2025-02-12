@@ -1,6 +1,7 @@
 import parse from '../../parse/toJSON/index.js'
 import strip from '../../parse/toJSON/_strip.js'
 import { titlecase, percentage, toOrdinal } from '../_lib.js'
+import { formatNum, parseNum, formatNumWithOptions, convertUnits, formatUnit, getSignificantDigitCount } from './numbers.js'
 export default {
   //https://en.wikipedia.org/wiki/Template:Ra
   ra: (tmpl) => {
@@ -293,9 +294,7 @@ export default {
     tmpl = tmpl.replace(/:/, '|')
     let obj = parse(tmpl, ['number'])
     let str = obj.number || ''
-    str = str.replace(/,/g, '')
-    let num = Number(str)
-    return num.toLocaleString() || ''
+    return formatNum(str)
   },
 
   //https://en.wikipedia.org/wiki/Template:Frac
@@ -320,7 +319,62 @@ export default {
       }
       return `${obj.num} ${obj.two} ${obj.three}`
     }
-    return `${obj.num} ${obj.two}`
+    let sigFig = obj.sigfig
+    let fractionDigits = obj.four
+    if (sigFig === undefined && fractionDigits === undefined) {
+      sigFig = getSignificantDigitCount(obj.num)
+    }
+    let num1 = formatNumWithOptions(obj.num, sigFig, fractionDigits)
+    let units1 = formatUnit(obj.two)
+    if (obj.three) {
+      let units2 = formatUnit(obj.three)
+      let num2 = convertUnits(obj.num, units1, units2)
+      if (num2) {
+        return `${num1}${units1} (${formatNumWithOptions(num2, sigFig, fractionDigits)}${units2})`
+      }
+    }
+    return `${num1}${units1}`
+  },
+
+  //https://en.wikipedia.org/wiki/Template:Convinfobox
+  convinfobox: (tmpl) => {
+    let obj = parse(tmpl, ['num1', 'units1', 'num2', 'units2'])
+    obj.units1 = formatUnit(obj.units1)
+    obj.units2 = formatUnit(obj.units2)
+    if (!obj.units1) {
+      return ''
+    }
+    if (!obj.units2) {
+      if (obj.num1) {
+        return `${obj.num1}${obj.units1}`
+      } else {
+        return ''
+      }
+    }
+    if (!obj.num1 && !obj.num2) {
+      return ''
+    }
+
+    let sigFig = obj.sigfig
+    let fractionDigits = obj.list ? obj.list[0] : undefined
+    if (!obj.num2) {
+      obj.num2 = convertUnits(obj.num1, obj.units1, obj.units2)
+      if (!obj.num2) {
+        return `${obj.num1}${obj.units1}`
+      }
+      if (sigFig === undefined && fractionDigits === undefined) {
+        sigFig = getSignificantDigitCount(obj.num1)
+      }
+    } else if (!obj.num1) {
+      obj.num1 = convertUnits(obj.num2, obj.units2, obj.units1)
+      if (!obj.num1) {
+        return `${obj.num2}${obj.units2}`
+      }
+      if (sigFig === undefined && fractionDigits === undefined) {
+        sigFig = getSignificantDigitCount(obj.num2)
+      }
+    }
+    return `${formatNumWithOptions(obj.num1, sigFig, fractionDigits)}${obj.units1} (${formatNumWithOptions(obj.num2, sigFig, fractionDigits)}${obj.units2})`
   },
 
   // Large number of aliases - https://en.wikipedia.org/wiki/Template:Tl

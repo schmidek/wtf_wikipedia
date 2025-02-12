@@ -64,7 +64,8 @@
   },
   "dependencies": {
     "isomorphic-unfetch": "^3.1.0",
-    "path-exists-cli": "2.0.0"
+    "path-exists-cli": "2.0.0",
+    "convert": "5.7.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "24.1.0",
