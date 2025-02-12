@@ -15,7 +15,7 @@ export function formatNumWithOptions(str, sigFig, fractionDigits) {
     if (sigFig !== undefined && sigFig < 21 && sigFig > 0) {
       options.maximumSignificantDigits = new Number(sigFig)
     }
-    if (fractionDigits !== undefined) {
+    if (fractionDigits !== undefined && fractionDigits >= 0 && fractionDigits <= 100) {
       options.maximumFractionDigits = new Number(fractionDigits)
     }
     // TODO locale from page language?
