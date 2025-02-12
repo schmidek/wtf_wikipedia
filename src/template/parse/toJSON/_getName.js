@@ -14,7 +14,9 @@ const getName = function (tmpl) {
     name = (tmpl.match(/^\{\{(.+?)\}\}$/) || [])[1]
   }
   if (name) {
-    name = name.replace(/:.*/, '')
+    if (!name.startsWith('#invoke')) {
+      name = name.replace(/:.*/, '')
+    }
     name = fmtName(name)
   }
   return name || null

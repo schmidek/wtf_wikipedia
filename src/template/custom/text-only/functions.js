@@ -1171,5 +1171,12 @@ export default {
       }
     }
     return ans.trim()
+  },
+  '#invoke:wikidataib': (tmpl) => {
+    let obj = parse(tmpl)
+    if (!obj.list) {
+      return ''
+    }
+    return obj.list[obj.list.length - 1]
   }
 }
