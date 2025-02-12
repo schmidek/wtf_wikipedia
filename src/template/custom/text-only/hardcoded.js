@@ -128,4 +128,5 @@ export default {
   sharp: '♯',
   lbf: 'lbF',
   lbm: 'lbm',
+  nbsp: ' '
 }
