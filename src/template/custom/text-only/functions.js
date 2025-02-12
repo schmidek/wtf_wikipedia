@@ -949,6 +949,69 @@ export default {
     }
     return data.b
   },
+  if: (tmpl) => {
+    let data = parse(tmpl, ['cond', 'a', 'b'])
+    if (data.cond) {
+      return data.a || ''
+    }
+    return data.b || ''
+  },
+  '#if': (tmpl) => {
+    let data = parse(tmpl.replace(':', '|'), ['cond', 'a', 'b'])
+    let ans = data.b || ''
+    if (typeof data.cond === 'string' ? data.cond.trim() : data.cond) {
+      ans = data.a || ''
+    }
+    if (ans) {
+      ans = ans.trim()
+    }
+    return ans
+  },
+  '#ifeq': (tmpl) => {
+    let data = parse(tmpl.replace(':', '|'), ['string1', 'string2', 'a', 'b'])
+    let ans = data.b || ''
+    if (data.string1 == data.string2) {
+      ans = data.a || ''
+    }
+    if (ans) {
+      ans = ans.trim()
+    }
+    return ans
+  },
+  '#ifexist': (tmpl) => {
+    // TODO don't have a way to tell if a page exists
+    let data = parse(tmpl.replace(':', '|'), ['page', 'a', 'b'])
+    if (data.b) {
+      return data.b.trim()
+    }
+    return ''
+  },
+  '#switch': (tmpl) => {
+    let data = parse(tmpl.replace(':', '|'), ['val'])
+    if (data.val && data[data.val.toLowerCase()]) {
+      return data[data.val.toLowerCase()]
+    }
+    if (data['#default']) {
+      return data['#default']
+    }
+    if (data.list && data.list.length > 0 && data.list[data.list.length-1]) {
+      let l = data.list[data.list.length-1]
+      if (l.indexOf('=') == -1) { // must not contain equals sign
+        return l
+      }
+    }
+    return ''
+  },
+  'if empty': (tmpl) => {
+    let arr = parse(tmpl).list || []
+    for (let i = 0; i < arr.length; i++) {
+      let v = arr[i]
+      if (v) {
+        return v
+      }
+    }
+    return ''
+  },
   both: (tmpl) => {
     let data = parse(tmpl, ['a', 'b'])
     if (data.a && data.b) {
