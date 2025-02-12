@@ -1,7 +1,9 @@
 import { fromText as parseSentence } from '../04-sentence/index.js'
 import cleanup from '../template/parse/toJSON/03-cleanup.js'
 import Section from '../02-section/Section.js'
+import Paragraph from '../03-paragraph/Paragraph.js'
 import preProcess from '../01-document/preProcess/index.js'
+import { fromRaw as sentenceFromRaw } from '../04-sentence/index.js'
 
 const expandVariables = function (s, data) {
   let numBrackets = 0;
@@ -64,7 +66,7 @@ const toMarkdown = function (tmpl, data, doc) {
   //remove template name
   arr.shift()
 
-  let markdown = ''
+  let sentences = []
   let labels = {}
   let prefixes = {}
   let suffixes = {}
@@ -102,7 +104,10 @@ const toMarkdown = function (tmpl, data, doc) {
       // TODO
     } else if (key.startsWith('header')) {
       let prefix = prefixes[key.substring(6)] || ''
-      markdown += `\n${prefix}##### ${valueText}\n`
+      if (sentences.length != 0) {
+        prefix += '\n'
+      }
+      sentences.push(sentenceFromRaw(`${prefix}##### ${valueText}`))
     } else if (key.startsWith('label')) {
       labels[key.substring(5)] = valueText
     } else if (key.startsWith('data')) {
@@ -115,7 +120,7 @@ const toMarkdown = function (tmpl, data, doc) {
         label = label + ': '
       }
       let suffix = suffixes[key.substring(4)] || ''
-      markdown += `${prefix}${label}${valueText}\n${suffix}`
+      sentences.push(sentenceFromRaw(`${prefix}${label}${valueText}${suffix}`))
     } else if (key.startsWith('rowclass')) {
       if (valueText == 'mergedtoprow') {
         //prefixes[key.substring(8)] = '\n'
@@ -126,6 +131,10 @@ const toMarkdown = function (tmpl, data, doc) {
     }
   }
 
-  return markdown.trim()
+  return new Paragraph({
+    sentences: sentences,
+    lists: [],
+    references: []
+  })
 }
 export default toMarkdown
