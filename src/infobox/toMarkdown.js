@@ -52,7 +52,7 @@ const toMarkdown = function (tmpl, data, doc) {
   let wiki = tmpl.wiki
   // some templates have everything within <includeonly></includeonly>
   let opening = '<includeonly>'
-  let openingIndex = wiki.indexOf(opening)
+  let openingIndex = wiki.toLowerCase().indexOf(opening + '{{infobox')
   if (openingIndex != -1) {
     let closingIndex = wiki.indexOf('</includeonly>')
     wiki = wiki.substring(openingIndex + opening.length, closingIndex)
