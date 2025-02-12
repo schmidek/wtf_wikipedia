@@ -25,6 +25,7 @@ function preProcess(wiki) {
   wiki = wiki.replace(/\{\{\\\}\}/g, ' / ')
   // some html escaping
   wiki = wiki.replace(/&nbsp;/g, ' ')
+  wiki = wiki.replace(/&#32;/g, ' ')
   wiki = wiki.replace(/&ndash;/g, '–')
 
   //give it the inglorious send-off it deserves..
