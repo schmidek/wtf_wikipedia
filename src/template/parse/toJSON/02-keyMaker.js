@@ -37,6 +37,52 @@ const parseKey = function (str) {
 }
 
 /**
+ * turn [a, b=v, c] into {'a':v, b:v, '1':c}
+ *
+ * @private
+ * @param {string[]} arr the array of parameters
+ * @param {string[]} [order] the order in which the parameters are returned
+ * @returns {object} and object with the names as the keys and the values as the values
+ */
+const keyMakerWithFallthrough = function (arr, order) {
+  let keyIndex = 0
+  return arr.reduce((h, str = '') => {
+    str = str.trim()
+
+    //support named keys - 'foo=bar'
+    if (hasKey.test(str) === true) {
+      let res = parseKey(str)
+      if (res.key) {
+        // don't overwrite if empty
+        if (h[res.key] && !res.val) {
+          return h
+        }
+        h[res.key] = res.val
+        if (h.list) {
+          for (const other of h.list) {
+            h[other] = res.val
+          }
+          h.list = []
+        }
+        return h
+      }
+    }
+
+    //if the current index is present in the order array then we have a name for the key
+    if (order && order[keyIndex]) {
+      let key = order[keyIndex]
+      h[key] = str
+    } else {
+      h.list = h.list || []
+      h.list.push(str)
+    }
+
+    keyIndex += 1
+    return h
+  }, {})
+}
+
+/**
  * turn [a, b=v, c] into {'1':a, b:v, '2':c}
  *
  * @private
@@ -76,4 +122,4 @@ const keyMaker = function (arr, order) {
   }, {})
 }
 
-export default keyMaker
+export {keyMaker as default, keyMakerWithFallthrough}

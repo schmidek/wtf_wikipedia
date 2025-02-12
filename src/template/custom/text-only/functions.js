@@ -1,4 +1,5 @@
 import parse from '../../parse/toJSON/index.js'
+import {parserWithFallthrough} from '../../parse/toJSON/index.js'
 import strip from '../../parse/toJSON/_strip.js'
 import { titlecase, percentage, toOrdinal } from '../_lib.js'
 import { formatNum, parseNum, formatNumWithOptions, convertUnits, formatUnit, getSignificantDigitCount } from './numbers.js'
@@ -1041,7 +1042,7 @@ export default {
     return ''
   },
   '#switch': (tmpl) => {
-    let data = parse(tmpl.replace(':', '|'), ['val'])
+    let data = parserWithFallthrough(tmpl.replace(':', '|'), ['val'])
     if (data.val && data[data.val.toLowerCase()]) {
       return data[data.val.toLowerCase()]
     }
@@ -1050,7 +1051,7 @@ export default {
     }
     if (data.list && data.list.length > 0 && data.list[data.list.length-1]) {
       let l = data.list[data.list.length-1]
-      if (l.indexOf('=') == -1) { // must not contain equals sign
+      if (l.indexOf('=') == -1 && l !== "#default") { // must not contain equals sign
         return l
       }
     }
