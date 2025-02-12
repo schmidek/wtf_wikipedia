@@ -10,9 +10,7 @@ const getEpoch = function (obj) {
 }
 
 //very rough!
-const delta = function (from, to) {
-  from = getEpoch(from)
-  to = getEpoch(to)
+const deltaFromDates = function (from, to) {
   let diff = to - from
   let obj = {}
   //get years
@@ -34,6 +32,12 @@ const delta = function (from, to) {
     // diff -= (obj.days * day);
   }
   return obj
+}
+
+const delta = function (from, to) {
+  from = getEpoch(from)
+  to = getEpoch(to)
+  return deltaFromDates(from, to)
 }
 
 //not all too fancy - used in {{timesince}}
@@ -61,4 +65,4 @@ const timeSince = function (str) {
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-export { days, timeSince, delta }
+export { days, timeSince, delta, deltaFromDates }

@@ -1,6 +1,6 @@
 import parsers from './_parsers.js'
 import parse from '../../../parse/toJSON/index.js'
-import { days, timeSince } from './_lib.js'
+import { days, timeSince, deltaFromDates } from './_lib.js'
 import { toOrdinal } from '../../_lib.js'
 import { ymd, toText, toTextBritish } from './_format.js'
 
@@ -64,6 +64,57 @@ export default {
   'time ago': (tmpl) => {
     let time = parse(tmpl, ['date', 'fmt']).date
     return timeSince(time)
+  },
+  'time interval': (tmpl) => {
+    let obj = parse(tmpl, ['from', 'to'])
+    let from = new Date(obj.from)
+    if (isNaN(from.getTime())) {
+      return ''
+    }
+    let to = new Date() // Defaults to now
+    if (obj.to) {
+      let toDate = new Date(obj.to)
+      if (!isNaN(toDate.getTime())) {
+        to = toDate
+      }
+    }
+    let sep = ','
+    if (obj.sep) {
+      sep = obj.sep
+      if (sep == 'space') {
+        sep = ' '
+      }
+      if (sep == 'comma' || sep == 'serialcomma') {
+        sep = ','
+      }
+      if (sep == ',') {
+        sep = ', '
+      }
+    }
+    let show = 'ymd'
+    if (obj.show) {
+      show = obj.show
+    }
+    // TODO only years, months, days currently supported
+    let delta = deltaFromDates(from, to)
+    let fields = {}
+    if (delta.years) {
+      fields['y'] = `${delta.years} years`
+    }
+    if (delta.months) {
+      fields['m'] = `${delta.months} months`
+    }
+    if (delta.days) {
+      fields['d'] = `${delta.days} days`
+    }
+    let parts = []
+    for (let i = 0; i < show.length; i++) {
+      let c = show.charAt(i)
+      if (fields[c]) {
+        parts.push(fields[c])
+      }
+    }
+    return parts.join(sep)
   },
   'birth date': (tmpl, list) => {
     let obj = parse(tmpl, ['year', 'month', 'date'])
@@ -167,7 +218,12 @@ export default {
   //https://en.wikipedia.org/wiki/Template:Time
   time: () => {
     let d = new Date()
-    let obj = ymd([d.getFullYear(), d.getMonth(), d.getDate()])
+    let obj = ymd([d.getFullYear(), d.getMonth()+1, d.getDate()])
+    return toText(obj)
+  },
+  today: () => {
+    let d = new Date()
+    let obj = ymd([d.getFullYear(), d.getMonth()+1, d.getDate()])
     return toText(obj)
   },
 
