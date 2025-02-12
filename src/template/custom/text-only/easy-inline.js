@@ -12,6 +12,7 @@ let templates = {
   sort: 1, //https://en.wikipedia.org/wiki/'Sort',
   color: 1,
   'background color': 1,
+  'hanging indent': 0,
 }
 
 //templates that we simply grab their insides as plaintext
