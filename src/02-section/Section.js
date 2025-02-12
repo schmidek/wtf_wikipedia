@@ -53,22 +53,25 @@ class Section {
     this._wiki = startEndTemplates.text
     this._templates = this._templates.concat(startEndTemplates.templates)
 
+    // remove comments
+    this._wiki = this._wiki.replace(/<\!--[\S\s]*?-->/g, '')
+
     //parse-out the <ref></ref> tags
     parseReferences(this)
     //parse-out all {{templates}}
     parseTemplates(this, doc)
     //parse refs again, templates could create them
-    parseReferences(this)
+    //parseReferences(this)
 
     //parse the tables
     //parseTable(this)
 
     //now that we're done with xml, do a generic + dangerous xml-tag removal
-    const dontRemove = ['math']
-    const xmlRemoval = new RegExp(` ?<[ /]?(?!${dontRemove.join('|')})[a-z0-9]{1,8}[a-z0-9=" ]{2,20}[ /]?> ?`, 'g')
-    this._wiki = this._wiki
-      .replace(/< ?table ?[^>]{0,200}?>[\s\S]+?< ?\/ ?table ?>/gi, ' ') //<table>*</table>
-      .replace(xmlRemoval, ' ') //<samp name="asd">
+    //const dontRemove = ['math']
+    //const xmlRemoval = new RegExp(` ?<[ /]?(?!${dontRemove.join('|')})[a-z0-9]{1,8}[a-z0-9=" ]{2,20}[ /]?> ?`, 'g')
+    //this._wiki = this._wiki
+    //  .replace(/< ?table ?[^>]{0,200}?>[\s\S]+?< ?\/ ?table ?>/gi, ' ') //<table>*</table>
+    //  .replace(xmlRemoval, ' ') //<samp name="asd">
 
     //now parse all double-newlines
     parseParagraphs(this, doc)

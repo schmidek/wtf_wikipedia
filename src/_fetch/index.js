@@ -50,6 +50,20 @@ const defaults = {
  * @param {fetchCallback} [callback] the callback function for the call
  */
 const fetch = function (title, options, callback) {
+  fetchData(title, options, )
+  return fetchData(title, options)
+    .then((data) => {
+      if (data) {
+        data = parseDoc(data, title)
+        if (callback) {
+          callback(null, data)
+        }
+      }
+      return data
+    })
+}
+
+const fetchData = function (title, options, callback) {
   // support lang as 2nd param
   if (typeof options === 'string') {
     options = { lang: options }
@@ -71,7 +85,6 @@ const fetch = function (title, options, callback) {
         throw new Error(`No JSON Data Found For ${url}`)
       }
       let data = getResult(res, options)
-      data = parseDoc(data, title)
       if (callback) {
         callback(null, data)
       }
@@ -85,4 +98,6 @@ const fetch = function (title, options, callback) {
       return null
     })
 }
+
 export default fetch
+export {fetchData}

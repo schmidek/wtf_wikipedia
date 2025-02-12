@@ -16,7 +16,7 @@ const yearIn = /^year in [A-Z]/i
 const isInfobox = function (name) {
   //known
   if (infoboxList.hasOwnProperty(name) === true) {
-    return true
+    return infoboxList[name]
   }
   if (i18nReg.test(name)) {
     return true

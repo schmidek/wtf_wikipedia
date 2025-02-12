@@ -1,4 +1,5 @@
 import fetch from './_fetch/index.js'
+import {fetchData} from './_fetch/index.js'
 import version from './_version.js'
 import Document from './01-document/Document.js'
 
@@ -22,6 +23,7 @@ import Template from './template/Template.js'
 import http from './_lib/fetch.js'
 import templates from './template/custom/index.js'
 import infoboxes from './infobox/_infoboxes.js'
+import infoboxToMarkdown from './infobox/toMarkdown.js'
 
 const models = {
   Doc,
@@ -41,6 +43,12 @@ const models = {
 
 wtf.fetch = function (title, options, cb) {
   return fetch(title, options, cb)
+}
+wtf.fetchData = function (title, options, cb) {
+  return fetchData(title, options, cb)
+}
+wtf.infoboxToMarkdown = function (tmpl, data, doc) {
+  return infoboxToMarkdown(tmpl, data, doc)
 }
 wtf.extend = function (fn) {
   fn(models, templates, infoboxes)

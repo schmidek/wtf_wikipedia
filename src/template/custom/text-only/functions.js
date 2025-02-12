@@ -1102,4 +1102,19 @@ export default {
     }
     return `{{${out}}}`
   },
+  'infobox country/multirow': (tmpl) => {
+    let obj = parse(tmpl)
+    if (!obj.list) {
+      return ''
+    }
+    let ans = ''
+    for (let i = 1; i < obj.list.length; i += 2) {
+      let label = obj.list[i-1]
+      let data = obj.list[i]
+      if (label && data) {
+        ans += `- ${label}: ${data}\n`
+      }
+    }
+    return ans.trim()
+  }
 }

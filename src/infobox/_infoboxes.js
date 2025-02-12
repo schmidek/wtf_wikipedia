@@ -34,4 +34,5 @@ export default {
   'hockey team player': true,
   'hockey team start': true,
   mlbbioret: true,
+  'infobox country/multirow': false,
 }
