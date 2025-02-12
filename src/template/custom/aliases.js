@@ -92,6 +92,7 @@ let multi = {
     'unbulleted',
     'unbulletedlist',
     'vunblist',
+    'unbulleted indent list'
   ],
 
   'election box begin': [
