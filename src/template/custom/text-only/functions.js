@@ -1190,4 +1190,22 @@ export default {
       return singular
     }
   },
+  'if first display both': (tmpl) => {
+    let obj = parse(tmpl, ['first', 'second'])
+    let first = obj.first || ''
+    let second = obj.second || ''
+    if (first) {
+      return `${first}${second}`
+    }
+    return ''
+  },
+  'if last display both': (tmpl) => {
+    let obj = parse(tmpl, ['first', 'second'])
+    let first = obj.first || ''
+    let second = obj.second || ''
+    if (second) {
+      return `${first}${second}`
+    }
+    return ''
+  },
 }
