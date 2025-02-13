@@ -2,7 +2,7 @@ import parse from '../../parse/toJSON/index.js'
 import {parserWithFallthrough} from '../../parse/toJSON/index.js'
 import strip from '../../parse/toJSON/_strip.js'
 import { titlecase, percentage, toOrdinal } from '../_lib.js'
-import { formatNum, parseNum, formatNumWithOptions, convertUnits, formatUnit, getSignificantDigitCount } from './numbers.js'
+import { formatNum, formatNumWithOptions, convertUnits, formatUnit, getSignificantDigitCount } from './numbers.js'
 export default {
   //https://en.wikipedia.org/wiki/Template:Ra
   ra: (tmpl) => {
