@@ -50,13 +50,36 @@ const expandVariables = function (s, data) {
 
 const toMarkdown = function (tmpl, data, doc) {
   let wiki = tmpl.wiki
-  // some templates have everything within <includeonly></includeonly>
-  let opening = '<includeonly>'
-  let openingIndex = wiki.toLowerCase().indexOf(opening + '{{infobox')
-  if (openingIndex != -1) {
-    let closingIndex = wiki.indexOf('</includeonly>')
-    wiki = wiki.substring(openingIndex + opening.length, closingIndex)
+
+  // Find the first {{infobox }} template
+  let openingIndex = wiki.indexOf('{{infobox')
+  if (openingIndex == -1) {
+    openingIndex = wiki.indexOf('{{Infobox')
   }
+  if (openingIndex == -1) {
+    return null
+  }
+  openingIndex += 2
+  let brackets = 2;
+  let closingIndex = -1
+  for (let i = openingIndex; i < wiki.length; i++) {
+    let char = wiki.charAt(i)
+    if (char == '}') {
+      brackets--
+    }
+    if (char == '{') {
+      brackets++
+    }
+    if (brackets === 0) {
+      closingIndex = i - 1
+      break
+    }
+  }
+
+  if (closingIndex == -1) {
+    return null
+  }
+  wiki = wiki.substring(openingIndex, closingIndex)
 
   // do variable replacements
   wiki = expandVariables(wiki, data.data)
@@ -70,6 +93,8 @@ const toMarkdown = function (tmpl, data, doc) {
   let labels = {}
   let prefixes = {}
   let suffixes = {}
+  let autoHeaders = false
+
   for (let i = 0; i < arr.length; i++) {
     let line = arr[i]
     let separatorIndex = line.indexOf("=")
@@ -88,9 +113,14 @@ const toMarkdown = function (tmpl, data, doc) {
     if (!valueText) {
       continue
     }
+
+    if (key == 'autoheaders' && valueText == 'y') {
+      autoHeaders = true
+    }
+
     //valueText = valueText.replace(/\s*?\n\s*/g, ' ')
     // replace div with newline
-    if (!key.startsWith("header")) {
+    if (!key.match(/^header\d+/)) {
       valueText = valueText.replace(/ ?< ?div [a-zA-Z0-9=%.\-#:;'" ]{2,100}\/? ?> ?/g, '\n\n')
     }
     valueText = preProcess(valueText)
@@ -98,19 +128,22 @@ const toMarkdown = function (tmpl, data, doc) {
     if (valueText.startsWith('•')) {
       valueText = '-' + valueText.substring(1)
     }
-    if (key.startsWith('image')) {
+    if (!valueText) {
+      continue
+    }
+    if (key.match(/^image\d+/)) {
       // TODO
-    } else if (key.startsWith('caption')) {
+    } else if (key.match(/^caption\d+/)) {
       // TODO
-    } else if (key.startsWith('header')) {
+    } else if (key.match(/^header\d+/)) {
       let prefix = prefixes[key.substring(6)] || ''
       if (sentences.length != 0) {
         prefix += '\n'
       }
       sentences.push(sentenceFromRaw(`${prefix}##### ${valueText}`))
-    } else if (key.startsWith('label')) {
+    } else if (key.match(/^label\d+/)) {
       labels[key.substring(5)] = valueText
-    } else if (key.startsWith('data')) {
+    } else if (key.match(/^data\d+/)) {
       let label = labels[key.substring(4)] || ''
       let prefix = prefixes[key.substring(4)] || ''
       if (!label.startsWith("-")) {
@@ -121,7 +154,7 @@ const toMarkdown = function (tmpl, data, doc) {
       }
       let suffix = suffixes[key.substring(4)] || ''
       sentences.push(sentenceFromRaw(`${prefix}${label}${valueText}${suffix}`))
-    } else if (key.startsWith('rowclass')) {
+    } else if (key.match(/^rowclass\d+/)) {
       if (valueText == 'mergedtoprow') {
         //prefixes[key.substring(8)] = '\n'
       }
@@ -129,6 +162,32 @@ const toMarkdown = function (tmpl, data, doc) {
         //suffixes[key.substring(8)] = '\n'
       }
     }
+  }
+
+  // https://en.wikipedia.org/wiki/Template:Infobox#Hiding_headers_when_all_its_data_fields_are_empty
+  // When true hides headers that don't have any rows
+  if (autoHeaders) {
+    let previousWasHeader = false
+    let newSentences = []
+    for (let sentence of sentences) {
+      let text = sentence.text()
+      let isHeader = text.includes("#####")
+      if (isHeader && previousWasHeader) {
+        // remove previous header
+        newSentences.pop()
+      }
+      if (!text.includes('_BLANK_')) {
+        previousWasHeader = isHeader
+        newSentences.push(sentence)
+      } else {
+        // did add it so don't need to track it
+        previousWasHeader = false
+      }
+    }
+    if (previousWasHeader && newSentences.length > 0) {
+      newSentences.pop()
+    }
+    sentences = newSentences
   }
 
   return new Paragraph({
