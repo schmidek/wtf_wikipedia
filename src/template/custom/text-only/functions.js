@@ -1178,5 +1178,16 @@ export default {
       return ''
     }
     return obj.list[obj.list.length - 1]
-  }
+  },
+  'pluralize from text': (tmpl) => {
+    let obj = parse(tmpl, ['param', 'singular', 'plural'])
+    let param = obj.param || ''
+    let singular = obj.singular || ''
+    let plural = obj.plural || ''
+    if (param.includes(',') || param.includes(';') || param.includes('and')) {
+      return plural
+    } else {
+      return singular
+    }
+  },
 }
