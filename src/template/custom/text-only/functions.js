@@ -1172,12 +1172,14 @@ export default {
     }
     return ans.trim()
   },
+  // https://en.wikipedia.org/wiki/Module:WikidataIB
   '#invoke:wikidataib': (tmpl) => {
-    let obj = parse(tmpl)
-    if (!obj.list) {
-      return ''
+    // Only handling the local parameter
+    let obj = parse(tmpl, ['method', 'param', 'local'])
+    if (obj.local && obj.local !== "none" && obj.local !== "Wikidata") {
+      return obj.local
     }
-    return obj.list[obj.list.length - 1]
+    return ''
   },
   'pluralize from text': (tmpl) => {
     let obj = parse(tmpl, ['param', 'singular', 'plural'])
