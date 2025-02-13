@@ -51,10 +51,15 @@ const expandVariables = function (s, data) {
 const toMarkdown = function (tmpl, data, doc) {
   let wiki = tmpl.wiki
 
-  // Find the first {{infobox }} template
+  // Find the first {{infobox }} or {{#invoke:Infobox|infoboxTemplate
   let openingIndex = wiki.indexOf('{{infobox')
-  if (openingIndex == -1) {
-    openingIndex = wiki.indexOf('{{Infobox')
+  let openingIndexAlt1 = wiki.indexOf('{{Infobox')
+  if (openingIndex == -1 || (openingIndexAlt1 != -1 && openingIndexAlt1 < openingIndex)) {
+    openingIndex = openingIndexAlt1
+  }
+  let openingIndexAlt2 = wiki.indexOf('{{#invoke:Infobox')
+  if (openingIndex == -1 || (openingIndexAlt2 != -1 && openingIndexAlt2 < openingIndex)) {
+    openingIndex = openingIndexAlt2
   }
   if (openingIndex == -1) {
     return null
