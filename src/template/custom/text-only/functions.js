@@ -313,6 +313,9 @@ export default {
   //https://en.wikipedia.org/wiki/Template:Convert#Ranges_of_values
   convert: (tmpl) => {
     let obj = parse(tmpl, ['num', 'two', 'three', 'four'])
+    if (!obj.num) {
+      return ''
+    }
     //todo: support plural units
     if (obj.two === '-' || obj.two === 'to' || obj.two === 'and') {
       if (obj.four) {
