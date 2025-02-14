@@ -1213,4 +1213,11 @@ export default {
     }
     return ''
   },
+  "langx": (tmpl) => {
+    let obj = parse(tmpl, ['lang', 'str'])
+    if (!obj.str || obj.lang !== "en") {
+      return ''
+    }
+    return `English: ${obj.str}`
+  },
 }
