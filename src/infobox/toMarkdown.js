@@ -93,6 +93,25 @@ const toMarkdown = function (tmpl, data, doc) {
   let arr = wiki.split(/\n\|/)
   //remove template name
   arr.shift()
+  // some values can span more than one line if they have template, so we need to join these back together
+  let fixedArr = []
+  for (let i = 0; i < arr.length; i++) {
+    let line = arr[i]
+    let openingBrackets = (line.match(/{/g) || []).length
+    let closingBrackets = (line.match(/}/g) || []).length
+    while (openingBrackets > closingBrackets) {
+      i++
+      if (i >= arr.length) {
+        break
+      }
+      let joinLine = arr[i]
+      openingBrackets += (joinLine.match(/{/g) || []).length
+      closingBrackets += (joinLine.match(/}/g) || []).length
+      line += " " + joinLine
+    }
+    fixedArr.push(line)
+  }
+  arr = fixedArr
 
   let sentences = []
   let labels = {}
@@ -133,7 +152,7 @@ const toMarkdown = function (tmpl, data, doc) {
     if (valueText.startsWith('•')) {
       valueText = '-' + valueText.substring(1)
     }
-    if (!valueText) {
+    if (!valueText || valueText.includes("{{") || valueText.includes("}}")) {
       continue
     }
     if (key.match(/^image\d+/)) {
