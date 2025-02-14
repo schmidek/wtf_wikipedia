@@ -1,27 +1,8 @@
 import parse from '../../parse/toJSON/index.js'
 import Image from '../../../image/Image.js'
-import { getLang, sisterProjects, toNumber } from '../_lib.js'
+import { sisterProjects, toNumber } from '../_lib.js'
 
 export default {
-  // https://en.wikipedia.org/wiki/Template:IPA
-  ipa: (tmpl, list) => {
-    let obj = parse(tmpl, ['transcription', 'lang', 'audio'])
-    obj.lang = getLang(obj.template)
-    obj.template = 'ipa'
-    list.push(obj)
-    return '' //obj.transcription
-  },
-  //https://en.wikipedia.org/wiki/Template:IPAc-en
-  ipac: (tmpl, list) => {
-    let obj = parse(tmpl)
-    obj.transcription = (obj.list || []).join(',')
-    delete obj.list
-    obj.lang = getLang(obj.template)
-    obj.template = 'ipac'
-    list.push(obj)
-    return ''
-  },
-
   quote: (tmpl, list) => {
     let obj = parse(tmpl, ['text', 'author'])
     list.push(obj)

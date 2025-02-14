@@ -1,5 +1,6 @@
 import parse from '../../parse/toJSON/index.js'
-import { percentage } from '../_lib.js'
+import { percentage, getLang } from '../_lib.js'
+import languages from '../../../_data/languages_english_name.js'
 
 let templates = {
   // https://en.wikipedia.org/wiki/Template:Math
@@ -395,6 +396,61 @@ let templates = {
     let out = obj.text || ''
     out += obj.date ? ' ' + obj.date : ''
     return out
+  },
+  // https://en.wikipedia.org/wiki/Template:IPA
+  'ipa': (tmpl, list) => {
+    let obj = parse(tmpl, ['first', 'second', 'code'])
+    if (!obj.second) {
+      return obj.first
+    }
+    let language = ''
+    if (languages.hasOwnProperty(obj.first) === true) {
+      language = languages[obj.first]
+    }
+    let label = ''
+    if (obj.code) {
+      switch (obj.code) {
+        case 'ipa':
+          label = 'IPA:'
+          break
+        case 'pron':
+          label = 'pronounced'
+          break
+        case 'also':
+          label = 'also'
+          break
+        case 'alsolang':
+          label = `also ${language}`
+          break
+        case 'langalso':
+          label = `${language} also`
+          break
+        case 'local':
+          label = 'locally'
+          break
+        case 'localpron':
+          label = 'local pronunciation:'
+          break
+        default:
+          label = `${language} pronunciation:`
+      }
+    }
+    list.push({
+      template: 'ipa',
+      lang: 'language',
+      transcription: obj.second,
+    })
+    return `${label} [${obj.second}]`
+  },
+  //https://en.wikipedia.org/wiki/Template:IPAc-en
+  ipac: (tmpl, list) => {
+    let obj = parse(tmpl)
+    obj.transcription = (obj.list || []).join('')
+    delete obj.list
+    obj.lang = getLang(obj.template)
+    obj.template = 'ipac'
+    list.push(obj)
+    return obj.transcription
   },
 }
 export default templates

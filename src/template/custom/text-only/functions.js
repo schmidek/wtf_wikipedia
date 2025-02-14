@@ -3,6 +3,7 @@ import {parserWithFallthrough} from '../../parse/toJSON/index.js'
 import strip from '../../parse/toJSON/_strip.js'
 import { titlecase, percentage, toOrdinal } from '../_lib.js'
 import { formatNum, formatNumWithOptions, convertUnits, formatUnit, getSignificantDigitCount } from './numbers.js'
+import languages from '../../../_data/languages_english_name.js'
 export default {
   //https://en.wikipedia.org/wiki/Template:Ra
   ra: (tmpl) => {
@@ -1213,11 +1214,15 @@ export default {
     }
     return ''
   },
-  "langx": (tmpl) => {
+  'langx': (tmpl) => {
     let obj = parse(tmpl, ['lang', 'str'])
-    if (!obj.str || obj.lang !== "en") {
+    if (!obj.str || !obj.lang || !languages[obj.lang]) {
       return ''
     }
-    return `English: ${obj.str}`
+    let language = ''
+    if (languages.hasOwnProperty(obj.lang) === true) {
+      language = languages[obj.lang]
+    }
+    return `${language}: ${obj.str}`
   },
 }

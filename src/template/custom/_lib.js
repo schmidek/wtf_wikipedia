@@ -1,4 +1,4 @@
-import languages from '../../_data/languages.js'
+import languages from '../../_data/languages_english_name.js'
 
 //simply num/denom * 100
 const percentage = function (obj) {
@@ -32,7 +32,7 @@ const getLang = function (name) {
   let lang = name.match(/ipac?-(.+)/)
   if (lang !== null) {
     if (languages.hasOwnProperty(lang[1]) === true) {
-      return languages[lang[1]].english_title
+      return languages[lang[1]]
     }
     return lang[1]
   }
