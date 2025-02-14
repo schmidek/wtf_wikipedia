@@ -4,6 +4,7 @@ import Section from '../02-section/Section.js'
 import Paragraph from '../03-paragraph/Paragraph.js'
 import preProcess from '../01-document/preProcess/index.js'
 import { fromRaw as sentenceFromRaw } from '../04-sentence/index.js'
+import Sentence from '../04-sentence/Sentence.js'
 
 const expandVariables = function (s, data) {
   let numBrackets = 0;
@@ -34,7 +35,7 @@ const expandVariables = function (s, data) {
           let variable = separatorIndex == -1 ? stringToExpand : stringToExpand.substring(0, separatorIndex)
           variable = variable.toLowerCase()
           let expanded = ""
-          if (variable in data) {
+          if (data[variable] && data[variable] instanceof Sentence) {
             expanded = data[variable].text()
           } else if (separatorIndex != -1 && stringToExpand.length > (separatorIndex+1)) {
             expanded = expandVariables(stringToExpand.substring(separatorIndex+1), data)
