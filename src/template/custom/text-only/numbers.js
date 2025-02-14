@@ -1,12 +1,15 @@
 import convert from "convert";
 
 export function formatNum(str) {
-    return parseNum(str).toLocaleString() || ''
+  return parseNum(str).toLocaleString() || ''
 }
 
 export function parseNum(str) {
-    str = str.replace(/,/g, '')
-    return Number(str)
+  if (typeof str !== "string" || typeof str === "number") {
+    return str
+  }
+  str = str.replace(/,/g, '')
+  return Number(str)
 }
 
 export function formatNumWithOptions(str, sigFig, fractionDigits) {
@@ -15,14 +18,20 @@ export function formatNumWithOptions(str, sigFig, fractionDigits) {
   }
   let num = parseNum(str)
   let options = {}
-  if (sigFig !== undefined && sigFig < 21 && sigFig > 0) {
-    options.maximumSignificantDigits = new Number(sigFig)
+  sigFig = parseNum(sigFig)
+  if (sigFig !== undefined && sigFig <= 21 && sigFig > 0) {
+    options.maximumSignificantDigits = sigFig
   }
+  fractionDigits = parseNum(fractionDigits)
   if (fractionDigits !== undefined && fractionDigits >= 0 && fractionDigits <= 100) {
-    options.maximumFractionDigits = new Number(fractionDigits)
+    options.maximumFractionDigits = fractionDigits
   }
   // TODO locale from page language?
-  return new Intl.NumberFormat("en-US", options).format(num)
+  try {
+    return new Intl.NumberFormat("en-US", options).format(num)
+  } catch (e) {
+    return new Intl.NumberFormat("en-US").format(num)
+  }
 }
 
 let convertUnit = function(unit) {
