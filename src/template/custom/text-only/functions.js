@@ -156,7 +156,13 @@ export default {
   },
 
   'comma separated entries': (tmpl) => {
-    let arr = parse(tmpl).list || []
+    let obj = parse(tmpl)
+    let arr = obj.list || []
+    for (let i = 10; i > 0; i--) {
+      if (obj[i]) {
+        arr.unshift(obj[i])
+      }
+    }
     return arr.join(', ')
   },
 
@@ -178,6 +184,9 @@ export default {
   plainlist: (tmpl) => {
     tmpl = strip(tmpl)
     let arr = tmpl.split('|').slice(1) //remove the title
+    if (arr[0] && arr[0].startsWith("1=")) {
+      arr[0] = arr[0].slice(2)
+    }
     arr = arr.join('|').split(/\n ?\* ?/) //split on newline
     arr = arr.filter((s) => s)
     return arr.join('\n\n')
