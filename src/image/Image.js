@@ -87,6 +87,11 @@ const methods = {
   wikitext: function () {
     return this.data.wiki || ''
   },
+  markdown: function () {
+    let alt = this.caption() || this.alt()
+    alt = alt.replaceAll("[", "\\[").replaceAll("]", "\\]")
+    return `![${alt}](${this.url()})`
+  },
 }
 
 Object.keys(methods).forEach((k) => {

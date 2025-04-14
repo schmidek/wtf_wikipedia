@@ -68,7 +68,7 @@ const parseParagraphs = function (section, doc) {
     //parse the sentences
     //parseSentences(paragraph)
 
-    let lines = str.split(/\n/g)
+    let lines = paragraph.wiki.split(/\n/g)
     let theRest = []
     let list = []
     let table_stack = []

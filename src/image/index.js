@@ -77,7 +77,7 @@ const parseImages = function (paragraph, doc) {
       let img = oneImage(s, doc)
       if (img) {
         paragraph.images.push(img)
-        wiki = wiki.replace(s, '')
+        wiki = wiki.replace(s, img.markdown())
       }
     }
   })
