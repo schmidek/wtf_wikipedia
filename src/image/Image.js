@@ -89,6 +89,7 @@ const methods = {
   },
   markdown: function () {
     let alt = this.caption() || this.alt()
+    alt = alt.replace(/\[([^\]]+)\][^\)]+\)/g, '$1') // remove links otherwise too much escaping
     alt = alt.replaceAll("[", "\\[").replaceAll("]", "\\]")
     return `![${alt}](${this.url()})`
   },

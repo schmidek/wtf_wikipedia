@@ -12,9 +12,12 @@ const getLinks = function (data) {
   let wiki = data.text
   let links = parseLinks(wiki) || []
   data.links = links.map((link) => {
-    wiki = wiki.replace(link.raw, link.text || link.page || '')
-    // delete link.raw
-    return new Link(link)
+    let raw = link.raw
+    link = new Link(link)
+    let l = link.link()
+    let markdown = `[${l.text || ''}](${l.url})`
+    wiki = wiki.replace(raw, markdown)
+    return link
   })
   wiki = removeLinks(wiki)
   data.text = wiki
