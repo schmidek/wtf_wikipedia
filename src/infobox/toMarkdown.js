@@ -150,7 +150,7 @@ const toMarkdown = function (tmpl, data, doc) {
     //valueText = valueText.replace(/\s*?\n\s*/g, ' ')
     // replace div with newline
     if (!key.match(/^header\d+/)) {
-      valueText = valueText.replace(/ ?< ?div [a-zA-Z0-9=%.\-#:;'" ]{2,100}\/? ?> ?/g, '\n\n')
+      valueText = valueText.replace(/ ?< ?div [a-zA-Z0-9=%.\-#:;'" (),]{2,200}\/? ?> ?/g, '\n\n').replace(/\n\s+\n/g, '\n\n')
     }
     valueText = preProcess(valueText)
     valueText = valueText.replace(/\[\[File:.*?\]\]/g, '')
