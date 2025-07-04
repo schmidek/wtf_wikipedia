@@ -62,6 +62,10 @@ const toMarkdown = function (tmpl, data, doc) {
   if (openingIndex == -1 || (openingIndexAlt2 != -1 && openingIndexAlt2 < openingIndex)) {
     openingIndex = openingIndexAlt2
   }
+  let openingIndexAlt3 = wiki.indexOf('{{#invoke:infobox')
+  if (openingIndex == -1 || (openingIndexAlt3 != -1 && openingIndexAlt3 < openingIndex)) {
+    openingIndex = openingIndexAlt3
+  }
   if (openingIndex == -1) {
     return null
   }
