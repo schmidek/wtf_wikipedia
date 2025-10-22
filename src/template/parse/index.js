@@ -16,8 +16,16 @@ const parseTemplate = function (tmpl, doc) {
   //{{infobox settlement...}}
   if (isInfobox(name) === true) {
     let obj = toJSON(tmpl.body, [], 'raw')
+    let text = ''
+    if (obj.child && obj.child.text() == 'yes') {
+      let i = 2;
+      while (obj["label"+i] && obj["data"+i]) {
+        text += obj["label"+i].text() + ": " + obj["data"+i].text() + "\n";
+        i++;
+      }
+    }
     // list.push(infobox.format(obj))
-    return ['', fmtInfobox(obj)]
+    return [text, fmtInfobox(obj)]
   }
   //cite book, cite arxiv...
   if (/^cite [a-z]/.test(name) === true) {
